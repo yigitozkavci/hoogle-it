@@ -67,14 +67,26 @@ class Redbox extends SelectionBox {
 class HoogleBox extends SelectionBox {
   constructor(selection) {
     super(selection, 'hoogleBox');
-    this.setStyle();
+    this._setStyle();
     this.setPosition();
+    this._addCloseButton();
   }
 
-  setStyle() {
+  _setStyle() {
     this.domElem.style.border = "1px solid black";
     this.domElem.style.backgroundColor = "gray";
     this.domElem.style.padding = "5px";
+    this.domElem.style.maxWidth = "300px";
+  }
+
+  _addCloseButton() {
+    var button = document.createElement('button');
+    button.innerHTML = 'X';
+    var self = this;
+    button.addEventListener('click', function(e) {
+      self.domElem.remove();
+    });
+    this.domElem.appendChild(button);
   }
 
   injectContent(hoogleData) {
@@ -83,8 +95,8 @@ class HoogleBox extends SelectionBox {
   }
 
    _setContent(content) {
-    if(this.domElem.firstChild !== null) {
-      this.domElem.removeChild(this.domElem.firstChild);
+    if(this.domElem.children.length > 1) {
+      this.domElem.removeChild(this.domElem.children[1]);
     }
     this.domElem.appendChild(content);
   }
@@ -92,6 +104,7 @@ class HoogleBox extends SelectionBox {
   // Parses given hoogle data accordingly
    _prepareContent(hoogleData) {
     var content = document.createElement('div');
+    content.setAttribute('id', 'hoogleData');
     hoogleData.results.forEach(function(result) {
       var paragraph = document.createElement('p');
       paragraph.innerHTML = result.self;
