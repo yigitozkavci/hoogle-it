@@ -1,28 +1,45 @@
-class Redbox {
-  constructor(selection) {
-    var domElem = document.getElementById('redbox');
+class SelectionBox {
+  constructor(selection, id) {
+    this.selection = selection;
+    var domElem = document.getElementById(id);
     if(domElem == null) {
       domElem = document.createElement('div');
-      domElem.setAttribute('id', 'redbox');
-      domElem.style.width = 10 + 'px';
-      domElem.style.height = 10 + 'px';
-      domElem.style.backgroundColor = 'red';
+      domElem.setAttribute('id', id);
     }
-    setPosition(selection, domElem);
     this.domElem = domElem;
+  }
+
+  setPosition() {
+    var parentNode = this.selection.baseNode.parentNode
+    var selectionRect = this.selection.getRangeAt(0).getBoundingClientRect();
+
+    var parentRect = parentNode.getBoundingClientRect();
+    var parentOffset = getOffset(parentNode);
+
+    var leftMargin = selectionRect.right - parentRect.left + 5;
+    var topMargin = selectionRect.top - parentRect.top + 2;
+
+    this.domElem.style.position = "absolute";
+    this.domElem.style.top = (parentOffset[0] + topMargin) + 'px';
+    this.domElem.style.left = (parentOffset[1] + leftMargin) + 'px';
   }
 }
 
-class HoogleBox {
+class Redbox extends SelectionBox {
   constructor(selection) {
-    var domElem = document.getElementById('hoogleBox')
-    if(domElem === null) {
-      domElem = document.createElement('div');
-      domElem.setAttribute('id', 'hoogleBox');
-    }
-    this.domElem = domElem;
+    super(selection, 'redbox');
+    this.domElem.style.width = 10 + 'px';
+    this.domElem.style.height = 10 + 'px';
+    this.domElem.style.backgroundColor = 'red';
+    this.setPosition();
+  }
+}
+
+class HoogleBox extends SelectionBox {
+  constructor(selection) {
+    super(selection, 'hoogleBox');
     this.setStyle();
-    setPosition(selection, domElem);
+    this.setPosition();
   }
 
   setStyle() {
@@ -66,22 +83,6 @@ function prepareHoogleBoxStyle(element) {
   element.style.border = "1px solid black";
   element.style.backgroundColor = "gray";
   element.style.padding = "5px";
-}
-
-// Sets the position of hoogle box
-function setPosition(selection, element) {
-  selectionRect = selection.getRangeAt(0).getBoundingClientRect();
-  parentRect = selection.baseNode.parentNode.getBoundingClientRect();
-  var leftMargin = selectionRect.right - parentRect.left + 5;
-  var topMargin = selectionRect.top - parentRect.top + 2;
-  console.log(leftMargin);
-
-  var sel = selection.baseNode.parentNode;
-  element.style.position = "absolute";
-  offset = getOffset(sel);
-  console.log(offset);
-  element.style.top = (offset[0] + topMargin) + 'px';
-  element.style.left = (offset[1] + leftMargin) + 'px';
 }
 
 // Parses given hoogle data accordingly
