@@ -1,6 +1,8 @@
 // Monkey-patching element removal
 Element.prototype.remove = function() {
-  this.parentElement.removeChild(this);
+  if(this.parentElement !== null) {
+    this.parentElement.removeChild(this);
+  }
 }
 
 class SelectionBox {
@@ -181,7 +183,7 @@ function httpGet(url, callback) {
       if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
         callback(JSON.parse(xmlHttp.responseText));
       } else {
-        callback([]);
+        callback({ results: [] });
       }
     }
     xmlHttp.open("GET", url, true);
