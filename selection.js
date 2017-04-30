@@ -65,9 +65,13 @@ class Redbox extends SelectionBox {
     this.domElem.style.marginTop = '-3px';
     this.domElem.style.cursor = "pointer";
 
-    var infoText = document.createElement('b').appendChild(document.createTextNode('?'));
-    this.domElem.appendChild(infoText);
+    this.infoText = document.createTextNode('?');
+    this.domElem.appendChild(this.infoText);
     this.setPosition();
+  }
+
+  setLoading() {
+    this.domElem.innerHTML = '...';
   }
 }
 
@@ -154,6 +158,7 @@ window.addEventListener("mouseup", function(e) {
 
   document.body.appendChild(redbox.domElem);
   redbox.domElem.addEventListener('click', function(e) {
+    redbox.setLoading();
     getHoogleData(selectedText, function(hoogleData) {
       hoogleBox.injectContent(hoogleData);
       document.body.appendChild(hoogleBox.domElem);
