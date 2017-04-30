@@ -1,40 +1,63 @@
-window.addEventListener("mouseup", function(e) {
-  var text = document.getSelection();
-  if(text.toString() === '') return;
-  getHoogleData(text.toString(), function(hoogleData) {
-
-    var redbox = document.getElementById('redbox');
-    if(redbox == null) {
-      redbox = document.createElement('div');
-      redbox.setAttribute('id', 'redbox');
-      redbox.style.width = 10 + 'px';
-      redbox.style.height = 10 + 'px';
-      redbox.style.backgroundColor = 'red';
+class Redbox {
+  constructor(selection) {
+    var domElem = document.getElementById('redbox');
+    if(domElem == null) {
+      domElem = document.createElement('div');
+      domElem.setAttribute('id', 'redbox');
+      domElem.style.width = 10 + 'px';
+      domElem.style.height = 10 + 'px';
+      domElem.style.backgroundColor = 'red';
     }
-    setPosition(text, redbox);
+    setPosition(selection, domElem);
+    this.domElem = domElem;
+  }
+}
 
+class HoogleBox {
+  constructor(selection) {
+    var domElem = document.getElementById('hoogleBox')
+    if(domElem === null) {
+      domElem = document.createElement('div');
+      domElem.setAttribute('id', 'hoogleBox');
+    }
+    this.domElem = domElem;
+    this.setStyle();
+    setPosition(selection, domElem);
+  }
+
+  setStyle() {
+    this.domElem.style.border = "1px solid black";
+    this.domElem.style.backgroundColor = "gray";
+    this.domElem.style.padding = "5px";
+  }
+
+  setContent(content) {
+    if(this.domElem.firstChild !== null) {
+      this.domElem.removeChild(this.domElem.firstChild);
+    }
+    this.domElem.appendChild(content);
+  }
+}
+
+window.addEventListener("mouseup", function(e) {
+  var selection = document.getSelection();
+  if(selection.toString() === '') return;
+  getHoogleData(selection.toString(), function(hoogleData) {
+
+    var redbox = new Redbox(selection);
 
     // Create/fetch hoogle box element
-    var element = document.getElementById('hoogleBox')
-    if(element === null) {
-      element = document.createElement('div');
-      element.setAttribute('id', 'hoogleBox');
-      prepareHoogleBoxStyle(element);
-    }
     content = prepareContent(hoogleData);
 
-    // position element
-    setPosition(text, element);
-
+    var hoogleBox = new HoogleBox(selection);
+    hoogleBox.setContent(content);
     // Create / update hoogle box
-    if(element.firstChild !== null) {
-      element.removeChild(element.firstChild);
-    }
-    element.appendChild(content);
 
     // Append the redbox
-    // document.body.appendChild(redbox);
-    document.body.appendChild(element);
+    document.body.appendChild(redbox.domElem);
+    redbox.domElem.addEventListener('click', function(e) {
+      document.body.appendChild(hoogleBox.domElem);
+    });
   });
 });
 
