@@ -8,7 +8,7 @@
   "content_scripts": [
     {
      "matches": ["<all_urls>"],
-     "js": ["lib/jquery/dist/jquery.min.js", "lib/jquery-ui/jquery-ui.min.js", "selection.js"],
+     "js": ["selection.js"],
      "run_at": "document_start",
      "all_frames": true
     }
