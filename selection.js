@@ -57,9 +57,16 @@ class SelectionBox {
 class Redbox extends SelectionBox {
   constructor(selection) {
     super(selection, 'redbox');
-    this.domElem.style.width = 10 + 'px';
-    this.domElem.style.height = 10 + 'px';
-    this.domElem.style.backgroundColor = 'red';
+    this.domElem.style.width = '20px';
+    this.domElem.style.height = '20px';
+    this.domElem.style.backgroundColor = '#CEDCEB';
+    this.domElem.style.borderRadius = '10px';
+    this.domElem.style.textAlign = 'center';
+    this.domElem.style.marginTop = '-3px';
+    this.domElem.style.cursor = "pointer";
+
+    var infoText = document.createElement('b').appendChild(document.createTextNode('?'));
+    this.domElem.appendChild(infoText);
     this.setPosition();
   }
 }
@@ -74,14 +81,26 @@ class HoogleBox extends SelectionBox {
 
   _setStyle() {
     this.domElem.style.border = "1px solid black";
-    this.domElem.style.backgroundColor = "gray";
-    this.domElem.style.padding = "5px";
-    this.domElem.style.maxWidth = "300px";
+    this.domElem.style.backgroundColor = "#CEEBCF";
+    this.domElem.style.maxWidth = "500px";
+    this.domElem.style.maxHeight = "200px";
+    this.domElem.style.overflow = "scroll";
   }
 
   _addCloseButton() {
     var button = document.createElement('button');
     button.innerHTML = 'X';
+    button.style.border = "none";
+    button.style.borderRadius = "10px";
+    button.style.width = "20px";
+    button.style.height = "20px";
+    button.style.padding = "0px";
+    button.style.backgroundColor = "#EB4646";
+    button.style.color = "white";
+    button.style.fontSize = "10px";
+    button.style.cursor = "pointer";
+    button.style.margin = "5px";
+
     var self = this;
     button.addEventListener('click', function(e) {
       self.domElem.remove();
@@ -103,16 +122,26 @@ class HoogleBox extends SelectionBox {
 
   // Parses given hoogle data accordingly
    _prepareContent(hoogleData) {
-    var content = document.createElement('div');
+    var content = document.createElement('ul');
     content.setAttribute('id', 'hoogleData');
     hoogleData.results.forEach(function(result) {
-      var paragraph = document.createElement('p');
-      paragraph.innerHTML = result.self;
-      content.appendChild(paragraph);
+      var item = document.createElement('li');
+      item.style.borderTop = "1px solid gray";
+      var signature = document.createElement('a');
+      signature.style.backgroundColor = "#F0F0F0";
+      signature.style.padding = "5px";
+      signature.style.display = "block";
+      signature.innerHTML = result.self;
+      signature.setAttribute('href', result.location);
+      var docs = document.createElement('p');
+      docs.style.padding = "5px";
+      docs.innerHTML = result.docs;
+      item.appendChild(signature);
+      item.appendChild(docs);
+      content.appendChild(item);
     });
     return content;
   }
-
 }
 
 window.addEventListener("mouseup", function(e) {
@@ -122,6 +151,7 @@ window.addEventListener("mouseup", function(e) {
 
   var redbox = new Redbox(selection);
   var hoogleBox = new HoogleBox(selection);
+
   document.body.appendChild(redbox.domElem);
   redbox.domElem.addEventListener('click', function(e) {
     getHoogleData(selectedText, function(hoogleData) {
