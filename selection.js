@@ -81,24 +81,24 @@ class HoogleBox extends SelectionBox {
   }
 }
 
+Element.prototype.remove = function() {
+  this.parentElement.removeChild(this);
+}
+
 window.addEventListener("mouseup", function(e) {
   var selection = document.getSelection();
-  if(selection.toString() === '') return;
-  getHoogleData(selection.toString(), function(hoogleData) {
+  var selectedText = selection.toString();
+  if(selectedText === '') return;
 
-    var redbox = new Redbox(selection);
-
-    // Create/fetch hoogle box element
-    content = prepareContent(hoogleData);
-
-    var hoogleBox = new HoogleBox(selection);
-    hoogleBox.setContent(content);
-    // Create / update hoogle box
-
-    // Append the redbox
-    document.body.appendChild(redbox.domElem);
-    redbox.domElem.addEventListener('click', function(e) {
+  var redbox = new Redbox(selection);
+  var hoogleBox = new HoogleBox(selection);
+  document.body.appendChild(redbox.domElem);
+  redbox.domElem.addEventListener('click', function(e) {
+    getHoogleData(selectedText, function(hoogleData) {
+      content = prepareContent(hoogleData);
+      hoogleBox.setContent(content);
       document.body.appendChild(hoogleBox.domElem);
+      redbox.domElem.remove();
     });
   });
 });
