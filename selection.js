@@ -137,6 +137,7 @@ class HoogleBox extends SelectionBox {
       signature.style.display = "block";
       signature.innerHTML = result.self;
       signature.setAttribute('href', result.location);
+      signature.setAttribute('target', "_blank");
       var docs = document.createElement('p');
       docs.style.padding = "5px";
       docs.innerHTML = result.docs;

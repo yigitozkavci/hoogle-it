@@ -1,7 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Getting started example",
-  "description": "This extension shows a Google Image search result for the current page",
+  "name": "Hoogle-It",
+  "short_name": "Hoogle documentation box",
+  "description": "Display haskell documentations in a box on text selection.",
   "version": "1.0",
 
   "content_scripts": [
@@ -18,7 +19,7 @@
     "<all_urls>"
   ],
   "background": {
-   "scripts": ["lib/jquery/dist/jquery.min.js", "background.js"] ,
+   "scripts": ["background.js"] ,
    "persistent": true
   },
   "browser_action": {
