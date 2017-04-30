@@ -14,7 +14,7 @@ class SelectionBox {
     var selectionRect = this.selection.getRangeAt(0).getBoundingClientRect();
 
     var parentRect = parentNode.getBoundingClientRect();
-    var parentOffset = getOffset(parentNode);
+    var parentOffset = this.getOffset(parentNode);
 
     var leftMargin = selectionRect.right - parentRect.left + 5;
     var topMargin = selectionRect.top - parentRect.top + 2;
@@ -23,6 +23,31 @@ class SelectionBox {
     this.domElem.style.top = (parentOffset[0] + topMargin) + 'px';
     this.domElem.style.left = (parentOffset[1] + leftMargin) + 'px';
   }
+
+  // Gets offset of the given element. Credits:
+  // http://stackoverflow.com/a/3471664/3138171
+  getOffset(el){
+      var el2 = el;
+      var curtop = 0;
+      var curleft = 0;
+      if (document.getElementById || document.all) {
+          do  {
+              curleft += el.offsetLeft-el.scrollLeft;
+              curtop += el.offsetTop-el.scrollTop;
+              el = el.offsetParent;
+              el2 = el2.parentNode;
+              while (el2 != el) {
+                  curleft -= el2.scrollLeft;
+                  curtop -= el2.scrollTop;
+                  el2 = el2.parentNode;
+              }
+          } while (el.offsetParent);
+      } else if (document.layers) {
+          curtop += el.y;
+          curleft += el.x;
+      }
+      return [curtop, curleft];
+  };
 }
 
 class Redbox extends SelectionBox {
@@ -102,29 +127,3 @@ function getHoogleData(text, callback) {
     callback(data);
   });
 }
-
-// Gets offset of the given element. Credits:
-// http://stackoverflow.com/a/3471664/3138171
-function getOffset(el){
-    var el2 = el;
-    var curtop = 0;
-    var curleft = 0;
-    if (document.getElementById || document.all) {
-        do  {
-            curleft += el.offsetLeft-el.scrollLeft;
-            curtop += el.offsetTop-el.scrollTop;
-            el = el.offsetParent;
-            el2 = el2.parentNode;
-            while (el2 != el) {
-                curleft -= el2.scrollLeft;
-                curtop -= el2.scrollTop;
-                el2 = el2.parentNode;
-            }
-        } while (el.offsetParent);
-
-    } else if (document.layers) {
-        curtop += el.y;
-        curleft += el.x;
-    }
-    return [curtop, curleft];
-};
