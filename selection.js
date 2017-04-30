@@ -1,11 +1,15 @@
+// Monkey-patching element removal
+Element.prototype.remove = function() {
+  this.parentElement.removeChild(this);
+}
+
 class SelectionBox {
   constructor(selection, id) {
     this.selection = selection;
     var domElem = document.getElementById(id);
-    if(domElem == null) {
-      domElem = document.createElement('div');
-      domElem.setAttribute('id', id);
-    }
+    if(domElem !== null) domElem.remove();
+    domElem = document.createElement('div');
+    domElem.setAttribute('id', id);
     this.domElem = domElem;
   }
 
@@ -73,16 +77,29 @@ class HoogleBox extends SelectionBox {
     this.domElem.style.padding = "5px";
   }
 
-  setContent(content) {
+  injectContent(hoogleData) {
+    var content = this._prepareContent(hoogleData);
+    this._setContent(content);
+  }
+
+   _setContent(content) {
     if(this.domElem.firstChild !== null) {
       this.domElem.removeChild(this.domElem.firstChild);
     }
     this.domElem.appendChild(content);
   }
-}
 
-Element.prototype.remove = function() {
-  this.parentElement.removeChild(this);
+  // Parses given hoogle data accordingly
+   _prepareContent(hoogleData) {
+    var content = document.createElement('div');
+    hoogleData.results.forEach(function(result) {
+      var paragraph = document.createElement('p');
+      paragraph.innerHTML = result.self;
+      content.appendChild(paragraph);
+    });
+    return content;
+  }
+
 }
 
 window.addEventListener("mouseup", function(e) {
@@ -95,31 +112,12 @@ window.addEventListener("mouseup", function(e) {
   document.body.appendChild(redbox.domElem);
   redbox.domElem.addEventListener('click', function(e) {
     getHoogleData(selectedText, function(hoogleData) {
-      content = prepareContent(hoogleData);
-      hoogleBox.setContent(content);
+      hoogleBox.injectContent(hoogleData);
       document.body.appendChild(hoogleBox.domElem);
       redbox.domElem.remove();
     });
   });
 });
-
-// Prepares styles for the hoogle box
-function prepareHoogleBoxStyle(element) {
-  element.style.border = "1px solid black";
-  element.style.backgroundColor = "gray";
-  element.style.padding = "5px";
-}
-
-// Parses given hoogle data accordingly
-function prepareContent(hoogleData) {
-  content = document.createElement('div');
-  hoogleData.results.forEach(function(result) {
-    paragraph = document.createElement('p');
-    paragraph.innerHTML = result.self;
-    content.appendChild(paragraph);
-  });
-  return content;
-}
 
 // Fetches data for the given query from hoogle
 function getHoogleData(text, callback) {
