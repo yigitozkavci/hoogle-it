@@ -3,7 +3,7 @@
   "name": "Hoogle-It",
   "short_name": "Hoogle documentation box",
   "description": "Display haskell documentations in a box on text selection.",
-  "version": "1.2",
+  "version": "1.3",
 
   "content_scripts": [
     {
