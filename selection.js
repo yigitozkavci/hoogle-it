@@ -170,7 +170,20 @@ window.addEventListener("mouseup", function(e) {
 
 // Fetches data for the given query from hoogle
 function getHoogleData(text, callback) {
-  $.get('https://www.haskell.org/hoogle/?mode=json&hoogle=' + text + '&start=1&count=10', function(data) {
+  httpGet('https://www.haskell.org/hoogle/?mode=json&hoogle=' + text + '&start=1&count=10', function(data) {
     callback(data);
   });
+}
+
+function httpGet(url, callback) {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() {
+      if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+        callback(JSON.parse(xmlHttp.responseText));
+      } else {
+        callback([]);
+      }
+    }
+    xmlHttp.open("GET", url, true);
+    xmlHttp.send(null);
 }
